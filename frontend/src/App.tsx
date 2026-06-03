@@ -24,7 +24,7 @@ import {
   ZAxis
 } from "recharts";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "";
 
 type KodakImage = {
   id: string;
@@ -168,9 +168,18 @@ function App() {
       if (!loadedImages.some((image) => image.id === imageId) && loadedImages[0]) {
         setImageId(loadedImages[0].id);
       }
-      const stf = loadedModels.find((model) => model.id === "stf");
+      const stf = loadedModels.find(
+        (model) => model.id === "stf" && model.qualities.some((quality) => quality.available)
+      );
+      const fallbackPaper = loadedModels.find(
+        (model) => model.family === "paper" && model.qualities.some((quality) => quality.available)
+      );
       const mbt = loadedModels.find((model) => model.id === "mbt2018-mean");
-      setMethodQuality(firstAvailableQuality(stf, "0.0035"));
+      const initialPaper = stf ?? fallbackPaper;
+      if (initialPaper) {
+        setMethodModelId(initialPaper.id);
+      }
+      setMethodQuality(firstAvailableQuality(initialPaper, "0.0035"));
       setBaselineQuality(firstAvailableQuality(mbt, "3"));
     }
     load().catch((reason) => setError(String(reason)));

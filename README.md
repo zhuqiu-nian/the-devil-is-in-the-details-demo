@@ -71,6 +71,15 @@ Open:
 http://127.0.0.1:5173
 ```
 
+## Cloud Studio Preview
+
+The repository includes `.vscode/preview.yml` for cloud preview:
+
+- Backend app: port `8000`
+- Frontend app: port `5173`
+
+The frontend uses Vite proxy rules for `/api`, `/data`, and `/outputs`, so the browser can access the backend through the frontend preview origin. If your Cloud Studio workspace keeps this repository inside a parent folder named `the-devil-is-in-the-details`, put the same preview config at the workspace root and set app roots to `./the-devil-is-in-the-details` and `./the-devil-is-in-the-details/frontend`.
+
 ## Notes
 
 This is a pretrained inference reproduction, not full OpenImages retraining. Learned-model bpp is estimated from likelihoods:
@@ -80,4 +89,3 @@ bpp = (sum -log2 p(y_hat) + sum -log2 p(z_hat)) / (H * W)
 ```
 
 The model checkpoints are intentionally excluded from git because they are large and exceed ordinary GitHub file limits.
-
