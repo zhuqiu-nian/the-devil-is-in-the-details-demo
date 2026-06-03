@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Demo artifacts and large assets
+outputs/
+checkpoints/**/*.pth
+checkpoints/**/*.pth.tar
+checkpoints/**/*.part
+external/
+data/kodak/*.png
+
+# Local paper/slide preparation notes
+paper_zh*.md
+vit_swin_attention_schematic.svg
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
