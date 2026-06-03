@@ -36,7 +36,15 @@ Download Kodak:
 python scripts/download_kodak.py
 ```
 
-Download official checkpoints as needed:
+Upload or copy the demo checkpoints to:
+
+```text
+checkpoints/stf/cnn_0018.pth.tar
+checkpoints/stf/cnn_0035.pth.tar
+checkpoints/stf/stf_0035.pth.tar
+```
+
+Optional: download other official checkpoints as needed:
 
 ```powershell
 python scripts/download_stf_checkpoints.py --model stf --lambdas 0.0035
@@ -78,7 +86,9 @@ The repository includes `.vscode/preview.yml` for cloud preview:
 - Backend app: port `8000`
 - Frontend app: port `5173`
 
-The frontend uses Vite proxy rules for `/api`, `/data`, and `/outputs`, so the browser can access the backend through the frontend preview origin. If your Cloud Studio workspace keeps this repository inside a parent folder named `the-devil-is-in-the-details`, put the same preview config at the workspace root and set app roots to `./the-devil-is-in-the-details` and `./the-devil-is-in-the-details/frontend`.
+The frontend uses Vite proxy rules for `/api`, `/data`, and `/outputs`, so the browser can access the backend through the frontend preview origin.
+
+For Cloud Studio imports, upload the three checkpoint files above into `checkpoints/stf/` before running paper-model inference. The preview will still open without them, but STF/CNN+WAM quality entries stay disabled until the files are present.
 
 ## Notes
 
@@ -88,4 +98,4 @@ This is a pretrained inference reproduction, not full OpenImages retraining. Lea
 bpp = (sum -log2 p(y_hat) + sum -log2 p(z_hat)) / (H * W)
 ```
 
-The model checkpoints are intentionally excluded from git because they are large and exceed ordinary GitHub file limits.
+Demo checkpoints are excluded from Git because they exceed ordinary GitHub file limits.
