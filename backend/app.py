@@ -8,7 +8,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from .codec import KODAK_DIR, OUTPUTS_DIR, available_models, batch_eval, get_cached_result, list_kodak_images, run_codec
+from .codec import ROOT, KODAK_DIR, OUTPUTS_DIR, available_models, batch_eval, get_cached_result, list_kodak_images, run_codec
+
+FRONTEND_DIST = ROOT / "frontend" / "dist"
+FRONTEND_ASSETS = FRONTEND_DIST / "assets"
 
 app = FastAPI(
     title="Window-Based Attention Image Compression Demo",
@@ -26,6 +29,8 @@ app.add_middleware(
 
 app.mount("/data", StaticFiles(directory=str(KODAK_DIR)), name="data")
 app.mount("/outputs", StaticFiles(directory=str(OUTPUTS_DIR)), name="outputs")
+if FRONTEND_ASSETS.exists():
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_ASSETS)), name="frontend-assets")
 
 
 class RunRequest(BaseModel):
@@ -54,6 +59,9 @@ def health() -> dict[str, str]:
 
 @app.get("/", response_class=HTMLResponse)
 def root() -> str:
+    index_html = FRONTEND_DIST / "index.html"
+    if index_html.exists():
+        return index_html.read_text(encoding="utf-8")
     return """
     <!doctype html>
     <html lang="zh-CN">
@@ -67,8 +75,8 @@ def root() -> str:
       </head>
       <body>
         <h1>STF Compression Backend is running</h1>
-        <p>This FastAPI service listens on <code>8000</code> and only serves API/static assets.</p>
-        <p>Open the React web demo on frontend port <code>5173</code>.</p>
+        <p>This FastAPI service listens on <code>8000</code>.</p>
+        <p>Build the frontend with <code>npm --prefix frontend run build</code>, then refresh this page.</p>
       </body>
     </html>
     """

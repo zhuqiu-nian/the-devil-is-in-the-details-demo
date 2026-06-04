@@ -3,18 +3,11 @@ apps:
   - port: 8000
     run: |
       python scripts/cloud_setup.py
+      npm --prefix frontend install
+      npm --prefix frontend run build
       python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000
     root: ./
-    name: STF Compression Backend
-    description: FastAPI inference API for the STF image-compression demo
-    autoOpen: true
-    autoPreview: false
-  - port: 5173
-    run: |
-      npm install
-      npm run dev -- --host 0.0.0.0 --port 5173
-    root: ./frontend
     name: STF Compression Web Demo
-    description: React dashboard for local-detail image-compression comparison
+    description: Single-port FastAPI + React image-compression demo
     autoOpen: true
     autoPreview: true

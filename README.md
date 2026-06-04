@@ -60,20 +60,30 @@ npm.cmd install
 
 ## Run
 
-Backend:
+Single-port production-style preview:
 
 ```powershell
+cd frontend
+npm.cmd install
+npm.cmd run build
+cd ..
 python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
 ```
 
-Frontend:
+Open:
+
+```text
+http://127.0.0.1:8000
+```
+
+Development mode with Vite is still available:
 
 ```powershell
 cd frontend
 npm.cmd run dev
 ```
 
-Open:
+Then open:
 
 ```text
 http://127.0.0.1:5173
@@ -81,12 +91,11 @@ http://127.0.0.1:5173
 
 ## Cloud Studio Preview
 
-The repository includes `.vscode/preview.yml` for cloud preview:
+The repository includes `.vscode/preview.yml` for cloud preview. It uses a single-port setup:
 
-- Backend app: port `8000`
-- Frontend app: port `5173`
+- Web demo and API: port `8000`
 
-The frontend uses Vite proxy rules for `/api`, `/data`, and `/outputs`, so the browser can access the backend through the frontend preview origin.
+Cloud Studio builds `frontend/dist` first, then FastAPI serves both the React page and API from port `8000`. This avoids iframe/proxy issues that can happen with Vite dev-server previews.
 
 For Cloud Studio imports, upload the three checkpoint files above into `checkpoints/stf/` before running paper-model inference. The preview will still open without them, but STF/CNN+WAM quality entries stay disabled until the files are present.
 
