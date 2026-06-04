@@ -7,3 +7,6 @@ torch
 torchvision
 pytorch-msssim
 gdown
+timm
+einops
+scipy
