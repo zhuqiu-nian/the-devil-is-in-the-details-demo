@@ -65,6 +65,46 @@ def patch_compressai_extensions() -> None:
     sys.modules["compressai.ans"] = ans
 
 
+def patch_optional_zoo_dependencies() -> None:
+    """Stub point-cloud-only optional deps that image compression baselines never use."""
+    if "torch_geometric" in sys.modules:
+        return
+
+    tg = types.ModuleType("torch_geometric")
+    tg_transforms = types.ModuleType("torch_geometric.transforms")
+    tg_data = types.ModuleType("torch_geometric.data")
+    tg_datapipes = types.ModuleType("torch_geometric.data.datapipes")
+
+    class BaseTransform:
+        def __call__(self, data: Any) -> Any:
+            return data
+
+    class Center(BaseTransform):
+        pass
+
+    class Data:
+        pass
+
+    def functional_transform(_name: str):
+        def decorator(cls: Any) -> Any:
+            return cls
+
+        return decorator
+
+    tg_transforms.BaseTransform = BaseTransform
+    tg_transforms.Center = Center
+    tg_data.Data = Data
+    tg_datapipes.functional_transform = functional_transform
+    tg.transforms = tg_transforms
+    tg.data = tg_data
+    tg_data.datapipes = tg_datapipes
+
+    sys.modules["torch_geometric"] = tg
+    sys.modules["torch_geometric.transforms"] = tg_transforms
+    sys.modules["torch_geometric.data"] = tg_data
+    sys.modules["torch_geometric.data.datapipes"] = tg_datapipes
+
+
 def prepare_compressai_import(package_dir: Path) -> None:
     for name in list(sys.modules):
         if name == "compressai" or name.startswith("compressai."):
@@ -74,6 +114,8 @@ def prepare_compressai_import(package_dir: Path) -> None:
             sys.path.remove(path)
     sys.path.insert(0, str(package_dir))
     patch_compressai_extensions()
+    if package_dir == ZOO_DIR:
+        patch_optional_zoo_dependencies()
 
 
 def strip_module_prefix(state_dict: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
