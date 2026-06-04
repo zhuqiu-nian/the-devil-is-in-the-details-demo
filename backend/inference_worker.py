@@ -65,14 +65,24 @@ def patch_compressai_extensions() -> None:
     sys.modules["compressai.ans"] = ans
 
 
+def prepare_compressai_import(package_dir: Path) -> None:
+    for name in list(sys.modules):
+        if name == "compressai" or name.startswith("compressai."):
+            del sys.modules[name]
+    for path in (str(STF_DIR), str(ZOO_DIR)):
+        while path in sys.path:
+            sys.path.remove(path)
+    sys.path.insert(0, str(package_dir))
+    patch_compressai_extensions()
+
+
 def strip_module_prefix(state_dict: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
     return {key.replace("module.", "", 1): value for key, value in state_dict.items()}
 
 
 def load_model(model_id: str, quality: str, device: torch.device) -> torch.nn.Module:
-    patch_compressai_extensions()
     if model_id in {"stf", "cnn-wam"}:
-        sys.path.insert(0, str(STF_DIR))
+        prepare_compressai_import(STF_DIR)
         from compressai.models import SymmetricalTransFormer, WACNN
 
         checkpoint_name = (
@@ -93,7 +103,7 @@ def load_model(model_id: str, quality: str, device: torch.device) -> torch.nn.Mo
         return net.eval().to(device)
 
     if model_id in {"mbt2018-mean", "cheng2020-attn"}:
-        sys.path.insert(0, str(ZOO_DIR))
+        prepare_compressai_import(ZOO_DIR)
         from compressai.zoo import cheng2020_attn, mbt2018_mean
 
         q = int(quality)

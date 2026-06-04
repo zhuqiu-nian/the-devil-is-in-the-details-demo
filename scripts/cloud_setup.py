@@ -28,9 +28,6 @@ def ensure_python_packages() -> None:
     run([sys.executable, "-m", "pip", "install", "-r", "backend/requirements.txt"])
     ensure_stf_repo()
     run([sys.executable, "-m", "pip", "install", "-e", str(STF_DIR)])
-    if (ZOO_DIR / "compressai").exists():
-        print(f"[skip] {ZOO_DIR} already contains CompressAI zoo package")
-        return
     run(
         [
             sys.executable,
@@ -39,6 +36,7 @@ def ensure_python_packages() -> None:
             "install",
             "--target",
             str(ZOO_DIR),
+            "--upgrade",
             "--no-deps",
             "compressai==1.2.8",
         ]
