@@ -16,6 +16,15 @@ def run(command: list[str], cwd: Path = ROOT) -> None:
     subprocess.run(command, cwd=str(cwd), check=True)
 
 
+def try_run(command: list[str], cwd: Path = ROOT) -> bool:
+    print("[try]", " ".join(command))
+    completed = subprocess.run(command, cwd=str(cwd), check=False)
+    if completed.returncode != 0:
+        print(f"[warn] command failed with code {completed.returncode}; continuing")
+        return False
+    return True
+
+
 def ensure_stf_repo() -> None:
     if STF_DIR.exists():
         print(f"[skip] {STF_DIR} already exists")
@@ -48,6 +57,10 @@ def ensure_kodak() -> None:
 
 
 def report_checkpoint_status() -> None:
+    stf_checkpoint = ROOT / "checkpoints" / "stf" / "stf_0035.pth.tar"
+    if not stf_checkpoint.exists() or stf_checkpoint.stat().st_size < 1_000_000:
+        try_run(["git", "lfs", "pull", "--include=checkpoints/stf/stf_0035.pth.tar"])
+
     expected = [
         ROOT / "checkpoints" / "stf" / "cnn_0018.pth.tar",
         ROOT / "checkpoints" / "stf" / "cnn_0035.pth.tar",

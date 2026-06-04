@@ -36,12 +36,18 @@ Download Kodak:
 python scripts/download_kodak.py
 ```
 
-Upload or copy the demo checkpoints to:
+The `stf_0035.pth.tar` checkpoint is tracked with Git LFS. If a Cloud Studio
+import does not fetch LFS objects automatically, run:
+
+```bash
+git lfs pull --include=checkpoints/stf/stf_0035.pth.tar
+```
+
+Upload or copy the remaining optional demo checkpoints to:
 
 ```text
 checkpoints/stf/cnn_0018.pth.tar
 checkpoints/stf/cnn_0035.pth.tar
-checkpoints/stf/stf_0035.pth.tar
 ```
 
 Optional: download other official checkpoints as needed:
@@ -97,7 +103,7 @@ The repository includes `.vscode/preview.yml` for cloud preview. It uses a singl
 
 Cloud Studio builds `frontend/dist` first, then FastAPI serves both the React page and API from port `8000`. This avoids iframe/proxy issues that can happen with Vite dev-server previews.
 
-For Cloud Studio imports, upload the three checkpoint files above into `checkpoints/stf/` before running paper-model inference. The preview will still open without them, but STF/CNN+WAM quality entries stay disabled until the files are present.
+For Cloud Studio imports, pull `stf_0035.pth.tar` through Git LFS or upload it into `checkpoints/stf/`. Upload `cnn_0018.pth.tar` and `cnn_0035.pth.tar` manually only if you also want CNN+WAM comparison. The preview will still open without checkpoints, but corresponding quality entries stay disabled until the files are present.
 
 ## Notes
 
@@ -107,4 +113,4 @@ This is a pretrained inference reproduction, not full OpenImages retraining. Lea
 bpp = (sum -log2 p(y_hat) + sum -log2 p(z_hat)) / (H * W)
 ```
 
-Demo checkpoints are excluded from Git because they exceed ordinary GitHub file limits.
+Most demo checkpoints are excluded from Git because they exceed ordinary GitHub file limits. `stf_0035.pth.tar` is tracked with Git LFS for Cloud Studio convenience.

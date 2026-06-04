@@ -15,6 +15,7 @@ outputs/
 checkpoints/**/*.pth
 checkpoints/**/*.pth.tar
 checkpoints/**/*.part
+!checkpoints/stf/stf_0035.pth.tar
 external/
 data/kodak/*.png
 
