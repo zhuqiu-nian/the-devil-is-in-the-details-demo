@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -49,6 +50,28 @@ class BatchEvalRequest(BaseModel):
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/", response_class=HTMLResponse)
+def root() -> str:
+    return """
+    <!doctype html>
+    <html lang="zh-CN">
+      <head>
+        <meta charset="utf-8" />
+        <title>STF Compression Backend</title>
+        <style>
+          body { font-family: system-ui, sans-serif; margin: 40px; line-height: 1.6; color: #172033; }
+          code { background: #eef1f3; padding: 2px 6px; border-radius: 4px; }
+        </style>
+      </head>
+      <body>
+        <h1>STF Compression Backend is running</h1>
+        <p>This FastAPI service listens on <code>8000</code> and only serves API/static assets.</p>
+        <p>Open the React web demo on frontend port <code>5173</code>.</p>
+      </body>
+    </html>
+    """
 
 
 @app.get("/api/images")
